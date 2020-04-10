@@ -14,5 +14,4 @@ hydro_observations <- fs::dir_ls("data/source/hydroottawa.com/", regexp = "*.xls
   clean_names() %>%
   arrange(time) %>%
   distinct(time, rate_type, consumption_k_wh, cost) %>%
-  as_tsibble(index = time)
-  mutate(year = year(date), month = month(date, label = TRUE), wday = wday(date, week_start = 1, label = TRUE))
+  as_tsibble(index = time, validate = FALSE)

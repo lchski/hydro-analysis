@@ -51,3 +51,30 @@ hydro_observations %>%
   mutate(usage_bin = cut(consumption_k_wh, breaks = 5)) %>%
   mutate(hr = hour(time)) %>%
   count_group(usage_bin, hr)
+
+
+
+hydro_observations %>%
+  index_by(ymonth = ~ yearmonth(.)) %>%
+  summarize(usage = sum(consumption_k_wh)) %>%
+  ggplot(aes(x = ymonth, y = usage)) +
+  geom_line()
+
+
+
+hydro_observations %>%
+  index_by(dweek = ~ wday(., week_start = 1, label = TRUE)) %>%
+  ggplot(aes(x = dweek, y = consumption_k_wh)) +
+  geom_jitter()
+
+hydro_observations %>%
+  mutate(
+    during_working_hours = hour(time) >= 8 & hour(time) <= 17,
+    during_wkday = wday(time, week_start = 1) < 6,
+  ) %>%
+  ggplot(aes(x = time, y = consumption_k_wh, color = during_wkday)) +
+  geom_point() +
+  geom_smooth() +
+  scale_x_datetime(date_breaks = "3 months", date_labels = "%b '%y", date_minor_breaks = "1 months") +
+  facet_grid(rows = vars(during_wkday))
+
