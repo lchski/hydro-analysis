@@ -76,13 +76,46 @@ hydro_observations %>%
   geom_jitter()
 
 hydro_observations %>%
+  index_by(dweek = ~ wday(., week_start = 1, label = TRUE)) %>%
+  mutate(date = yearmonth(time)) %>%
+  ggplot(aes(x = date, y = consumption_k_wh)) +
+  geom_jitter() +
+  geom_smooth() +
+  facet_grid(rows = vars(dweek))
+
+hydro_observations %>%
+  index_by(dweek = ~ wday(., week_start = 1, label = TRUE)) %>%
+  mutate(ymonth = yearmonth(time)) %>%
+  group_by(ymonth) %>%
+  summarize(consumption_k_wh = sum(consumption_k_wh), days_included = n() / 24) %>%
+  filter(days_included > 3) %>%
+  ggplot(aes(x = ymonth, y= consumption_k_wh)) +
+  geom_point() +
+  geom_smooth() +
+  facet_grid(rows = vars(dweek))
+
+hydro_observations %>%
   mutate(
     during_working_hours = hour(time) >= 8 & hour(time) <= 17,
     during_wkday = wday(time, week_start = 1) < 6,
+    ymonth = yearmonth(time)
   ) %>%
   ggplot(aes(x = time, y = consumption_k_wh, color = during_wkday)) +
   geom_point() +
   geom_smooth() +
   scale_x_datetime(date_breaks = "3 months", date_labels = "%b '%y", date_minor_breaks = "1 months") +
   facet_grid(rows = vars(during_wkday))
+
+## some experiments, but eh
+hydro_observations %>%
+  index_by(ymonth = ~ yearmonth(.)) %>%
+  mutate(
+    during_working_hours = hour(time) >= 8 & hour(time) <= 17,
+    during_wkday = wday(time, week_start = 1) < 6,
+  ) %>%
+  group_by(during_wkday, during_working_hours) %>%
+  summarize(consumption_k_wh = sum(consumption_k_wh)) %>%
+  ggplot(aes(x = ymonth, y = consumption_k_wh, color = during_working_hours)) +
+  geom_point()
+  
 
