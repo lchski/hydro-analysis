@@ -54,6 +54,14 @@ hydro_observations %>%
 
 
 
+
+
+
+
+
+
+
+
 hydro_observations %>%
   index_by(ymonth = ~ yearmonth(.)) %>%
   summarize(usage = sum(consumption_k_wh)) %>%
