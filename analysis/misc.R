@@ -119,3 +119,32 @@ hydro_observations %>%
   geom_point()
   
 
+hydro_observations %>%
+  index_by(month = ~ month(.)) %>%
+  mutate(is_summer_month = month(time) >= 5 & month(time) <= 9) %>%
+  filter(is_summer_month) %>%
+  ggplot(aes(x = time, y = consumption_k_wh, color = is_summer_month)) +
+  geom_point() +
+  geom_smooth()
+
+hydro_observations %>%
+  index_by(month = ~ month(.)) %>%
+  mutate(is_summer_month = month(time) >= 5 & month(time) <= 9) %>%
+  filter(is_summer_month) %>%
+  ggplot(aes(x = time, y = consumption_k_wh, color = year(time))) +
+  geom_point()
+
+hydro_observations %>%
+  index_by(month = ~ month(.)) %>%
+  mutate(is_summer_month = month(time) >= 5 & month(time) <= 9) %>%
+  mutate(consumption_k_wh = ifelse(is_summer_month, consumption_k_wh, NA_real_)) %>%
+  gg_season(consumption_k_wh, period = "month")
+
+hydro_observations %>%
+  index_by(day = ~ year(.) + yday(.)) %>%
+  summarize(consumption_k_wh = sum(consumption_k_wh))
+  mutate(is_summer_month = month(time) >= 5 & month(time) <= 9) %>%
+  mutate(consumption_k_wh = ifelse(is_summer_month, consumption_k_wh, NA_real_)) %>%
+  gg_season(consumption_k_wh, period = "month")
+  
+
