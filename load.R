@@ -15,3 +15,28 @@ hydro_observations <- fs::dir_ls("data/source/hydroottawa.com/", regexp = "*.xls
   arrange(time) %>%
   distinct(time, rate_type, consumption_k_wh, cost) %>%
   as_tsibble(key = NULL, index = time, validate = FALSE)
+
+climate_observations <- fs::dir_ls("data/source/climate.weather.gc.ca/", regexp = "*.csv") %>%
+  map_dfr(read_csv, .id = "source_file", col_types = cols(
+    .default = col_double(),
+    `Station Name` = col_character(),
+    `Date/Time` = col_datetime(format = ""),
+    Year = col_number(),
+    Month = col_number(),
+    Day = col_number(),
+    Time = col_time(format = ""),
+    `Temp Flag` = col_character(),
+    `Dew Point Temp Flag` = col_character(),
+    `Rel Hum Flag` = col_character(),
+    `Wind Dir Flag` = col_character(),
+    `Wind Spd Flag` = col_character(),
+    `Visibility Flag` = col_character(),
+    `Stn Press Flag` = col_character(),
+    `Hmdx Flag` = col_character(),
+    `Wind Chill` = col_double(),
+    `Wind Chill Flag` = col_character(),
+    Weather = col_character()
+  )) %>%
+  clean_names() %>%
+  arrange(date_time) %>%
+  as_tsibble(key = NULL, index = date_time)
