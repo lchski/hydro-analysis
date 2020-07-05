@@ -38,5 +38,9 @@ climate_observations <- fs::dir_ls("data/source/climate.weather.gc.ca/", regexp 
     Weather = col_character()
   )) %>%
   clean_names() %>%
+  remove_extra_columns() %>%
+  select(-source_file) %>%
   arrange(date_time) %>%
-  as_tsibble(key = NULL, index = date_time)
+  as_tsibble(key = NULL, index = date_time) %>%
+  filter(date_time >= (hydro_observations %>% slice(1) %>% pull(time))) %>% ## remove climate data before hydro data starts
+  filter(date_time <= (hydro_observations %>% slice(n()) %>% pull(time))) ## remove climate data after data ends
