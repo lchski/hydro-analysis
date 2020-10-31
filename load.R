@@ -44,3 +44,12 @@ climate_observations <- fs::dir_ls("data/source/climate.weather.gc.ca/", regexp 
   as_tsibble(key = NULL, index = date_time) %>%
   filter(date_time >= (hydro_observations %>% slice(1) %>% pull(time))) %>% ## remove climate data before hydro data starts
   filter(date_time <= (hydro_observations %>% slice(n()) %>% pull(time))) ## remove climate data after data ends
+
+
+tou_rates <- read_tsv("data/source/oeb.ca/tou-rates.tsv", skip = 1) %>%
+  clean_names %>%
+  mutate(effective_date = mdy(effective_date))
+
+tiered_rates <- read_tsv("data/source/oeb.ca/tiered-rates.tsv", skip = 1) %>%
+  clean_names %>%
+  mutate(effective_date = mdy(effective_date))

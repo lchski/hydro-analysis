@@ -64,6 +64,13 @@ hydro_observations %>%
 
 hydro_observations %>%
   index_by(ymonth = ~ yearmonth(.)) %>%
+  group_by(rate_type) %>%
+  summarize(usage = sum(consumption_k_wh)) %>%
+  ggplot(aes(x = ymonth, y = usage, color = rate_type)) +
+  geom_line()
+
+hydro_observations %>%
+  index_by(ymonth = ~ yearmonth(.)) %>%
   summarize(usage = sum(consumption_k_wh)) %>%
   ggplot(aes(x = ymonth, y = usage)) +
   geom_line()
