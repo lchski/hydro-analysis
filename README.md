@@ -1,6 +1,8 @@
 
 ## Downloading data
 
+Hydro: <https://secure.hydroottawa.com/Usage/Secure/TOU/DownloadMyData.aspx>
+
 For the hourly climate data (adapted from [ECCC instructions](https://drive.google.com/drive/folders/1WJCDEU34c60IfOnG4rv5EPZ4IhhW9vZH)), run this in `data/source/climate.weather.gc.ca/`:
 
 ```
